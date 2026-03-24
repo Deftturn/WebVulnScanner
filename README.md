@@ -37,11 +37,11 @@ python env : 3.13.7v
 `* Please be advised, it will be best to create an environment before using or performing any installations`
 
 To create an environment on windows
-Press `ctrl + shift + P`
-Type `Select interpreter`
-Select `Create Virtual Environment...`
-Select `Venv`
-Select a version to create your environment in, Remeber `3.13.7v`
++ Press `ctrl + shift + P`
++ Type `Select interpreter`
++ Select `Create Virtual Environment...`
++ Select `Venv`
++ Select a version to create your environment in, Remeber `3.13.7v`
 If you don't have it you can download it at https://www.python.org/downloads/windows
 
 * Do the same if you are using macOS except you'd have to change 'windows' to 'macOS'
