@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  webvulnscanner:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: webvulnscanner
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: python scanner/main.py
+    
