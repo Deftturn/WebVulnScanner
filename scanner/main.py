@@ -1,13 +1,18 @@
-#!/usr/bin/env python3
-"""
-Web Vulnerability Scanner
-Main entry point for the application
-"""
+import asyncio
+from crawler.dfs import DFSCrawler
 
-print("Web Vulnerability Scanner starting...")
+async def run():
+    crawler = DFSCrawler(
+        base_url="https://earndot.online",
+        max_depth=3,
+        concurrency=5
+    )
 
-# TODO: Implement scanner logic
-# For now, just keep the container running
-import time
-while True:
-    time.sleep(1)
+    async for page in crawler.main():
+        print(f"URL: {page['url']}")
+        print(f"Params: {page['params']}")
+        print(f"Forms: {page['forms']}")
+        print("-"*40)
+
+if __name__ == "__main__":
+    asyncio.run(run())
