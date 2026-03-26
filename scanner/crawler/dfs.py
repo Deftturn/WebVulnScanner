@@ -1,130 +1,275 @@
 import asyncio
-from urllib.parse import urljoin, urlparse, urlunparse, parse_qs
-from playwright.async_api import async_playwright
-from bs4 import BeautifulSoup
-from typing import List, Dict, Optional, Any, Set
+import logging
+from dataclasses import dataclass
+from typing import AsyncIterator, Dict, List, Optional, Set
+from urllib.parse import parse_qs, urljoin, urlparse, urlunparse
 
+from bs4 import BeautifulSoup
+from playwright.async_api import async_playwright, Browser, BrowserContext, Page
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Data model
+# ---------------------------------------------------------------------------
+
+@dataclass
+class CrawlResult:
+    url: str
+    normalized_url: str
+    depth: int
+    status: int
+    params: List[str]
+    links: List[str]
+    forms: List[Dict]
+    headers: Dict[str, str]
+
+
+# ---------------------------------------------------------------------------
+# Crawler
+# ---------------------------------------------------------------------------
 
 class DFSCrawler:
-    def __init__(self, base_url:str, max_depth:int = 3, concurrency:int =5):
-        self.base_url = base_url
-        self.visited:Set = set()
-        self.base_domain = urlparse(base_url).netloc
+    def __init__(
+        self,
+        base_url: str,
+        max_depth: int = 3,
+        concurrency: int = 5,
+        page_timeout_ms: int = 30000,
+        idle_wait_ms: int = 500,
+        retries: int = 2,
+        include_subdomains: bool = False,
+    ):
+        self.base_url = base_url.rstrip("/")
         self.max_depth = max_depth
-        self.concurrency = asyncio.Semaphore(concurrency)
+        self.page_timeout_ms = page_timeout_ms
+        self.idle_wait_ms = idle_wait_ms
+        self.retries = retries
+        self.include_subdomains = include_subdomains
 
+        parsed = urlparse(base_url)
+        self.base_domain = parsed.netloc
 
-    def normalize_url(self, url:str):
-        parsed = urlparse(url)
-        return urlunparse((
-            parsed.scheme, parsed.netloc, parsed.path.rstrip("/"), "", "", "" # Remove params,query,fragment
-        ))
+        self._sem = asyncio.Semaphore(concurrency)
+        self._visited: Set[str] = set()
+        self._queued: Set[str] = set()
+        self._lock = asyncio.Lock()
 
-    def check_same_domain(self, url:str):
-        return urlparse(url).netloc == self.base_domain
+    # ------------------------------------------------------------------
+    # URL helpers
+    # ------------------------------------------------------------------
 
-    def parameter_extractor(self, current_url:str):
-        return list(parse_qs(urlparse(current_url).query).keys())
+    def _normalize(self, url: str) -> str:
+        """Normalize URL but KEEP parameter structure (important for scanning)."""
+        p = urlparse(url)
+        keys = sorted(parse_qs(p.query).keys())
+        query_signature = "&".join(keys)
+        return urlunparse((p.scheme, p.netloc, p.path.rstrip("/"), "", query_signature, ""))
 
-    def link_extractor(self, html:str, url:str):
+    def _is_same_domain(self, url: str) -> bool:
+        host = urlparse(url).netloc
+        if self.include_subdomains:
+            return host == self.base_domain or host.endswith(f".{self.base_domain}")
+        return host == self.base_domain
+
+    @staticmethod
+    def _extract_params(url: str) -> List[str]:
+        return list(parse_qs(urlparse(url).query).keys())
+
+    # ------------------------------------------------------------------
+    # HTML parsing
+    # ------------------------------------------------------------------
+
+    def _extract_links(self, html: str, base_url: str) -> Set[str]:
         soup = BeautifulSoup(html, "lxml")
         links = set()
 
         for tag in soup.find_all("a", href=True):
             href = tag["href"]
-            full_url = urljoin(url, href)
 
-            if self.check_same_domain(full_url):
-                links.add(full_url)
+            if href.startswith(("mailto:", "javascript:", "tel:", "#")):
+                continue
+
+            full = urljoin(base_url, href).split("#")[0]
+
+            if self._is_same_domain(full):
+                links.add(full)
+
         return links
 
-    def form_extractor(self, html:str, current_url:str):
+    def _extract_forms(self, html: str, base_url: str) -> List[Dict]:
         soup = BeautifulSoup(html, "lxml")
-        forms:List = []
+        forms = []
 
         for form in soup.find_all("form"):
-            action = form.get("action") or current_url
+            action = urljoin(base_url, form.get("action") or base_url)
             method = form.get("method", "get").lower()
 
-            action_url = urljoin(current_url, action)
-            inputs = []
-            for inp in form.find_all(["input", "textarea", "select"]):
-                inp_name = inp.get("name")
-                if inp_name:
-                    inputs.append(inp_name)
+            inputs = [
+                inp.get("name")
+                for inp in form.find_all(["input", "textarea", "select"])
+                if inp.get("name")
+            ]
+
             forms.append({
-                "action": action_url,
+                "action": action,
                 "method": method,
                 "inputs": inputs
             })
+
         return forms
 
-    async def fetch(self, context, url:str):
-        async with self.concurrency:
-            page = await context.new_page()
-            try:
-                response = await page.goto(url, timeout=1000000, wait_until="networkidle")
-                await page.wait_for_timeout(5000)  # Wait for any dynamic content to load
-                content = await page.content()
-                headers = response.headers if response else {}
-                return content, headers
-            except:
-                response = await page.goto(url, timeout=1000000, wait_until="domcontentloaded")
-                content = await page.content()
-                headers = response.headers if response else {}
-                return content, headers
-            finally:
-                await page.close()
+    # ------------------------------------------------------------------
+    # Fetch with retry
+    # ------------------------------------------------------------------
 
-    async def main(self):
-        stack = [(self.base_url, 0)]
+    async def _fetch(self, context: BrowserContext, url: str):
+        async with self._sem:
+            for attempt in range(self.retries + 1):
+                page: Optional[Page] = None
+                try:
+                    page = await context.new_page()
 
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context()
+                    response = await page.goto(
+                        url,
+                        timeout=self.page_timeout_ms,
+                        wait_until="domcontentloaded"
+                    )
 
-            while stack:
-                url, depth = stack.pop()
-                norm_url= self.normalize_url(url)
+                    if not response:
+                        return None
 
-                if norm_url in self.visited or depth > self.max_depth:
-                    continue
-                self.visited.add(norm_url)
+                    if response.status >= 400:
+                        return None
 
-                html, headers = await self.fetch(context, norm_url) #type:ignore
-                if not html:
-                    continue
+                    await page.wait_for_timeout(self.idle_wait_ms)
 
-                links = self.link_extractor(html, url)
-                forms = self.form_extractor(html, url)
-                params = self.parameter_extractor(url)
+                    html = await page.content()
+                    headers = dict(response.headers)
 
-                yield {
-                    "url": url,
-                    "normalized_url": norm_url,
-                    "depth": depth,
-                    "params": params,
-                    "links": list(links), #type:ignore
-                    "forms": forms,
-                    "headers": headers
-                }
+                    return html, response.status, headers
 
-                for link in links: #type:ignore
-                    stack.append((link, depth+1))
+                except Exception as e:
+                    wait = 2 ** attempt
+                    logger.warning(f"{url} failed (attempt {attempt+1}), retrying in {wait}s")
+                    if attempt < self.retries:
+                        await asyncio.sleep(wait)
+                    else:
+                        return None
+                finally:
+                    if page:
+                        await page.close()
+
+    # ------------------------------------------------------------------
+    # Crawl single URL
+    # ------------------------------------------------------------------
+
+    async def _crawl_one(self, context, url, depth, queue):
+        norm = self._normalize(url)
+
+        async with self._lock:
+            if norm in self._visited or depth > self.max_depth:
+                return None
+            self._visited.add(norm)
+
+        result = await self._fetch(context, url)
+        if not result:
+            return None
+
+        html, status, headers = result
+
+        links = self._extract_links(html, url)
+        forms = self._extract_forms(html, url)
+        params = self._extract_params(url)
+
+        for link in links:
+            norm_link = self._normalize(link)
+
+            if norm_link not in self._visited and norm_link not in self._queued:
+                self._queued.add(norm_link)
+                await queue.put((link, depth + 1))
+
+        return CrawlResult(
+            url=url,
+            normalized_url=norm,
+            depth=depth,
+            status=status,
+            params=params,
+            links=list(links),
+            forms=forms,
+            headers=headers,
+        )
+
+    # ------------------------------------------------------------------
+    # Main crawl
+    # ------------------------------------------------------------------
+
+    async def crawl(self) -> AsyncIterator[CrawlResult]:
+        queue: asyncio.LifoQueue = asyncio.LifoQueue()  # DFS behavior
+        await queue.put((self.base_url, 0))
+
+        async with async_playwright() as pw:
+            browser: Browser = await pw.chromium.launch(headless=True)
+
+            context: BrowserContext = await browser.new_context()
+
+            # Block heavy resources globally
+            await context.route(
+                "**/*",
+                lambda route: route.abort()
+                if route.request.resource_type in {"image", "media", "font"}
+                else route.continue_(),
+            )
+
+            async def worker():
+                while True:
+                    try:
+                        url, depth = await queue.get()
+                    except:
+                        return
+
+                    result = await self._crawl_one(context, url, depth, queue)
+
+                    if result:
+                        yield result
+
+                    queue.task_done()
+
+            # Fixed worker pool
+            async def run_worker():
+                async for result in worker():
+                    yield result
+
+            while not queue.empty():
+                url, depth = await queue.get()
+                result = await self._crawl_one(context, url, depth, queue)
+                if result:
+                    yield result
+                queue.task_done()
+
+            await queue.join()
             await browser.close()
+
+
+# ---------------------------------------------------------------------------
+# Entry
+# ---------------------------------------------------------------------------
 
 async def run():
     crawler = DFSCrawler(
         base_url="https://earndot.online",
         max_depth=3,
-        concurrency=5
+        concurrency=5,
     )
 
-    async for page in crawler.main():
-        print(f"URL: {page['url']}")
-        print(f"Params: {page['params']}")
-        print(f"Forms: {page['forms']}")
-        print("-"*40)
+    async for page in crawler.crawl():
+        print(f"[{page.status}] {page.url}")
+        print(f"Params: {page.params}")
+        print(f"Forms: {page.forms}")
+        print("-" * 50)
+
 
 if __name__ == "__main__":
     asyncio.run(run())
