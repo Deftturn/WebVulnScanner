@@ -6,6 +6,7 @@ from urllib.parse import parse_qs, urljoin, urlparse, urlunparse
 
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright, Browser, BrowserContext, Page
+from playwright._impl._errors import TargetClosedError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -131,6 +132,10 @@ class DFSCrawler:
                 page: Optional[Page] = None
                 try:
                     page = await context.new_page()
+                    
+                    # Set timeout for all operations on this page
+                    page.set_default_timeout(self.page_timeout_ms)
+                    page.set_default_navigation_timeout(self.page_timeout_ms)
 
                     response = await page.goto(
                         url,
@@ -144,6 +149,12 @@ class DFSCrawler:
                     if response.status >= 400:
                         return None
 
+                    # Wait for network to be idle to ensure page is fully loaded
+                    try:
+                        await page.wait_for_load_state("networkidle", timeout=self.page_timeout_ms)
+                    except asyncio.TimeoutError:
+                        logger.debug(f"Network idle timeout for {url}, continuing anyway")
+
                     await page.wait_for_timeout(self.idle_wait_ms)
 
                     html = await page.content()
@@ -151,16 +162,35 @@ class DFSCrawler:
 
                     return html, response.status, headers
 
+                except (TargetClosedError, ConnectionError) as e:
+                    # Page/browser was closed, retry with backoff
+                    wait = 2 ** attempt
+                    logger.warning(f"{url} - target closed (attempt {attempt+1}), retrying in {wait}s")
+                    if attempt < self.retries:
+                        await asyncio.sleep(wait)
+                    else:
+                        return None
+                except asyncio.TimeoutError as e:
+                    wait = 2 ** attempt
+                    logger.warning(f"{url} - timeout (attempt {attempt+1}), retrying in {wait}s")
+                    if attempt < self.retries:
+                        await asyncio.sleep(wait)
+                    else:
+                        return None
                 except Exception as e:
                     wait = 2 ** attempt
-                    logger.warning(f"{url} failed (attempt {attempt+1}), retrying in {wait}s")
+                    logger.warning(f"{url} failed (attempt {attempt+1}): {type(e).__name__}: {e}")
                     if attempt < self.retries:
                         await asyncio.sleep(wait)
                     else:
                         return None
                 finally:
                     if page:
-                        await page.close()
+                        try:
+                            await page.close()
+                        except (TargetClosedError, Exception):
+                            # Page already closed, ignore
+                            pass
 
     # ------------------------------------------------------------------
     # Crawl single URL
@@ -223,34 +253,29 @@ class DFSCrawler:
                 else route.continue_(),
             )
 
-            async def worker():
-                while True:
+            try:
+                while not queue.empty():
                     try:
-                        url, depth = await queue.get()
-                    except:
-                        return
+                        url, depth = await asyncio.wait_for(queue.get(), timeout=5.0)
+                    except asyncio.TimeoutError:
+                        break
 
-                    result = await self._crawl_one(context, url, depth, queue)
+                    try:
+                        result = await self._crawl_one(context, url, depth, queue)
+                        if result:
+                            yield result
+                    except (TargetClosedError, ConnectionError) as e:
+                        logger.warning(f"Target closed while crawling {url}: {e}")
+                    except Exception as e:
+                        logger.warning(f"Error crawling {url}: {type(e).__name__}: {e}")
+                    finally:
+                        queue.task_done()
 
-                    if result:
-                        yield result
-
-                    queue.task_done()
-
-            # Fixed worker pool
-            async def run_worker():
-                async for result in worker():
-                    yield result
-
-            while not queue.empty():
-                url, depth = await queue.get()
-                result = await self._crawl_one(context, url, depth, queue)
-                if result:
-                    yield result
-                queue.task_done()
-
-            await queue.join()
-            await browser.close()
+                await queue.join()
+            except Exception as e:
+                logger.error(f"Error in crawl loop: {e}")
+            finally:
+                await browser.close()
 
 
 # ---------------------------------------------------------------------------
