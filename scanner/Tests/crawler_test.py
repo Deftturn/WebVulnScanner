@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from typing import List, Dict, Optional, Any, Set
 
 
-class DFSCrawler:
+class DFSCrawler: 
     def __init__(self, base_url:str, max_depth:int = 3, concurrency:int =5):
         self.base_url = base_url
         self.visited:Set = set()

