@@ -98,7 +98,7 @@ def analyze_vulnerability(data: ScannerInput):
                 "confidence": max(p.get('value', 0) for p in prediction.get('predictionValues', []))
             }
     
-    return {"error": f"API error: {response.status_code}", "detail": response.text[:200]}
+    return {"error": f"API error: {response.status_code}", "detail": response.text[:200]} #type:ignore
 
 @app.get("/health")
 def health():
