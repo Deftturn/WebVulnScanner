@@ -1,0 +1,1133 @@
+{
+  "scans": [
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:04:28",
+      "total_findings": 13,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:06:11.017658",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:25.534182",
+          "url": "http://testfire.net/subscribe.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:35.032204",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:37.474507",
+          "url": "http://testfire.net/survey_questions.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:37.634137",
+          "url": "http://testfire.net/status_check.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:37.948362",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.129751",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.352752",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.616230",
+          "url": "http://testfire.net/survey_questions.jsp?step=a",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.928890",
+          "url": "http://testfire.net/feedback.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.129515",
+          "url": "http://testfire.net/index.jsp?content=business_other.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.284979",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.409813",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:07:20",
+      "total_findings": 14,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:08:28.333313",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:34.926749",
+          "url": "http://testfire.net/status_check.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:35.350256",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:37.459294",
+          "url": "http://testfire.net/survey_questions.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:37.666064",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:37.940723",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.098872",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.379619",
+          "url": "http://testfire.net/survey_questions.jsp?step=a",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.766980",
+          "url": "http://testfire.net/feedback.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:38.997897",
+          "url": "http://testfire.net/index.jsp?content=inside_about.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.263577",
+          "url": "http://testfire.net/subscribe.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.435897",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.649249",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:39.775073",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:14:50",
+      "total_findings": 16,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:16:34.063047",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:00.971164",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:10.423217",
+          "url": "http://testfire.net/subscribe.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:10.594226",
+          "url": "http://testfire.net/survey_questions.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:11.077352",
+          "url": "http://testfire.net/feedback.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:11.205918",
+          "url": "http://testfire.net/subscribe.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:11.373276",
+          "url": "http://testfire.net/feedback.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:11.540773",
+          "url": "http://testfire.net/survey_questions.jsp?step=a",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:11.672788",
+          "url": "http://testfire.net/status_check.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:11.879264",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:12.362757",
+          "url": "http://testfire.net/status_check.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:12.749055",
+          "url": "http://testfire.net/index.jsp?content=inside_investor.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:12.922028",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:13.085714",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:13.260651",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:19:13.441956",
+          "url": "http://testfire.net/swagger/properties.json",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:23:45",
+      "total_findings": 14,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:27:29.325486",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:44.633136",
+          "url": "http://testfire.net/survey_questions.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:31:24.520155",
+          "url": "http://testfire.net/subscribe.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:34:32.908323",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:35:30.282583",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:35:40.542546",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:11.995939",
+          "url": "http://testfire.net/feedback.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:21.146864",
+          "url": "http://testfire.net/status_check.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:21.452322",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:23.107162",
+          "url": "http://testfire.net/index.jsp?content=personal_savings.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:23.254651",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:23.400410",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:23.596430",
+          "url": "http://testfire.net/index.jsp?content=business_deposit.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:23.760643",
+          "url": "http://testfire.net/high_yield_investments.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:30:14",
+      "total_findings": 18,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:32:33.435493",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:58.127436",
+          "url": "http://testfire.net/survey_questions.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:34:03.882460",
+          "url": "http://testfire.net/status_check.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:34:50.897886",
+          "url": "http://testfire.net/survey_questions.jsp?step=a",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:35:10.370540",
+          "url": "http://testfire.net/index.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:36:37.194978",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:37:27.368209",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:38:22.162457",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:07.922263",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:18.020379",
+          "url": "http://testfire.net/swagger/properties.json",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:19.700734",
+          "url": "http://testfire.net/swagger/properties.json",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:20.005477",
+          "url": "http://testfire.net/swagger/properties.json",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:20.311630",
+          "url": "http://testfire.net/swagger/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:20.594733",
+          "url": "http://testfire.net/feedback.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:20.778132",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:22.335431",
+          "url": "http://testfire.net/index.jsp?content=personal_savings.htm",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:22.538258",
+          "url": "http://testfire.net/subscribe.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:22.700942",
+          "url": "http://testfire.net/login.jsp",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:38:01",
+      "total_findings": 1,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:40:03.185853",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 04:19:58",
+      "total_findings": 1,
+      "results": [
+        {
+          "timestamp": "2026-08-12T04:21:39.906445",
+          "url": "http://testfire.net",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "UNKNOWN",
+          "ai_confidence": 0.0,
+          "fix": ""
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 04:52:38",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T04:53:37.462995",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T04:53:37.463030",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T04:53:37.463044",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T04:53:56.547372",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 04:57:47",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T04:59:56.304719",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T04:59:56.304767",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T04:59:56.304780",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:00:19.747581",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:17:45",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T05:19:43.513081",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:19:43.513210",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:19:43.513257",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:20:02.565381",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:25:20",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T05:27:29.481514",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:27:29.481576",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:27:29.481589",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:27:47.137058",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:35:23",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T05:36:20.235357",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7882212664812152,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:36:20.235401",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:36:20.235414",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:36:49.451931",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7882212664812152,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:38:18",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T05:40:24.503444",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:40:24.503493",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:40:24.503505",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:40:42.704863",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:48:41",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T05:50:55.099177",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:50:55.099227",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:50:55.099240",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T05:51:14.449594",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:58:57",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T06:01:06.803827",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T06:01:06.803874",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T06:01:06.803886",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T06:01:24.951689",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 21:28:32",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T21:30:52.088861",
+          "url": "http://zero.webappsecurity.com",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T21:30:52.088877",
+          "url": "http://zero.webappsecurity.com/admin/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/admin/ (Status: 200)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T21:30:52.088881",
+          "url": "http://zero.webappsecurity.com/backup/",
+          "check_type": "exposed_path",
+          "evidence": "Accessible path found: http://zero.webappsecurity.com/backup/ (Status: 403)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.8888816237,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        },
+        {
+          "timestamp": "2026-08-12T21:31:24.056846",
+          "url": "http://zero.webappsecurity.com/index.html",
+          "check_type": "missing_headers",
+          "evidence": "Missing security headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9591856599,
+          "fix": "What Was Found\nA security misconfiguration vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2022 Heroku/Travis-CI OAuth token leak - Missing security headers contributed to exploitation of stolen tokens\n\nSecurity Reference: CVE-2022-24730\n\nCode Example (python)\nfrom flask import Flask, render_template, request, jsonify\nfrom flask_talisman import Talisman\nimport os\n\napp = Flask(__name__)\n\n# Configure Content Security Policy\ncsp = {\n    'default-src': \"'self'\",\n    'script-src': \"'self'\",\n    'style-src': \"'self' 'unsafe-inline'\",  # Allow inline styles if needed\n    'img-src': \"'self' data: https:\",\n    'font-src': \"'self'\",\n    'connect-src': \"'self'\",\n    'frame-ancestors': \"'none'\",  # Prevent clickjacking\n    'form-action': \"'self'\",\n    'base-uri': \"'self'\"\n}\n\n# Apply security headers using Talisman\nTalisman(\n    app,\n    content_security_policy=csp,\n    content_security_policy_nonce_in=['script-src'],\n    force_https=True,\n    strict_transport_security=True,\n    strict_transport_security_max_age=31536000,  # 1 year\n    strict_transport_security_include_subdomains=True,\n    strict_transport_security_preload=True,\n    session_cookie_secure=True,\n    session_cookie_http_only=True,\n    frame_options='DENY',\n    x_content_type_options=True,\n "
+        }
+      ]
+    }
+  ]
+}

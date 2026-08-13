@@ -1,187 +1,181 @@
-import { useState, useEffect, useRef } from "react";
-import { ScrollText, AlertTriangle, Info, CheckCircle2, XCircle, Filter } from "lucide-react";
+// @ts-nocheck
 
-type LogLevel = "CRIT" | "WARN" | "INFO" | "OK" | "ERR";
+import { useState, useEffect } from "react";
+import { Clock, Download, Eye, X } from "lucide-react";
 
-interface LogEntry {
-  id: number;
-  ts: string;
-  level: LogLevel;
-  source: string;
-  message: string;
+const API_BASE = "http://127.0.0.1:8000";
+
+interface ScanRecord {
+  filename: string;
+  scan_type: string;
+  scan_url: string;
+  scan_time: string;
+  findings: number;
 }
 
-const levelColor: Record<LogLevel, string> = {
-  CRIT: "#ff2244",
-  WARN: "#ffcc00",
-  INFO: "#00d4ff",
-  OK: "#22c55e",
-  ERR: "#ff8800",
-};
-
-const levelIcon: Record<LogLevel, React.ReactNode> = {
-  CRIT: <AlertTriangle size={11} />,
-  WARN: <AlertTriangle size={11} />,
-  INFO: <Info size={11} />,
-  OK: <CheckCircle2 size={11} />,
-  ERR: <XCircle size={11} />,
-};
-
-const LOG_POOL: Omit<LogEntry, "id" | "ts">[] = [
-  { level: "CRIT", source: "scanner.core", message: "SQL Injection detected at /api/users?id=' OR 1=1--" },
-  { level: "CRIT", source: "xss.detector", message: "Stored XSS payload found in <script>alert('xss')</script>" },
-  { level: "WARN", source: "auth.module", message: "Brute force attempt detected from 203.0.113.42 (14 attempts)" },
-  { level: "OK", source: "scanner.core", message: "Scan completed: target.example.com (82 vectors tested)" },
-  { level: "INFO", source: "model.predict", message: "BERT-sec inference completed in 318ms (confidence: 0.9793)" },
-  { level: "ERR", source: "api.export", message: "Report export timeout after 30s — retrying (attempt 2/3)" },
-  { level: "INFO", source: "crawler.web", message: "Crawled 47 pages, discovered 12 new endpoints" },
-  { level: "CRIT", source: "data.leak", message: "Sensitive data exposure: PII fields in /api/profile response" },
-  { level: "OK", source: "owasp.mapper", message: "OWASP Top-10 classification complete — 6/10 categories flagged" },
-  { level: "WARN", source: "misconfig", message: "CORS policy misconfiguration: wildcard origin permitted on /api/*" },
-  { level: "INFO", source: "scheduler", message: "Next scheduled scan queued: api.prod.corp (T+00:04:17)" },
-  { level: "ERR", source: "model.predict", message: "GPU memory pressure — falling back to CPU inference" },
-  { level: "OK", source: "auth.module", message: "Token rotation complete for service account sentinel-svc@corp" },
-  { level: "CRIT", source: "ssrf.detector", message: "SSRF attempt blocked: internal metadata endpoint probed" },
-  { level: "INFO", source: "scanner.core", message: "Rate limiting applied: 120 req/s cap enforced on target" },
-];
-
-function makeTimestamp() {
-  const now = new Date();
-  return `${now.toTimeString().slice(0, 8)}.${String(now.getMilliseconds()).padStart(3, "0")}`;
-}
-
-let idCounter = 100;
-
-function generateLog(): LogEntry {
-  const template = LOG_POOL[Math.floor(Math.random() * LOG_POOL.length)];
-  return { ...template, id: idCounter++, ts: makeTimestamp() };
-}
-
-const INITIAL_LOGS: LogEntry[] = Array.from({ length: 12 }, (_, i) => ({
-  ...LOG_POOL[i % LOG_POOL.length],
-  id: i,
-  ts: makeTimestamp(),
-}));
-
-const ALL_LEVELS: LogLevel[] = ["CRIT", "ERR", "WARN", "OK", "INFO"];
-
-export function LogsFeed() {
-  const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
-  const [filter, setFilter] = useState<LogLevel | "ALL">("ALL");
-  const [paused, setPaused] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+export function ScanHistory() {
+  const [scans, setScans] = useState<ScanRecord[]>([]);
+  const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [selectedScanIndex, setSelectedScanIndex] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (paused) return;
-    const iv = setInterval(() => {
-      setLogs((prev) => {
-        const next = [generateLog(), ...prev].slice(0, 200);
-        return next;
-      });
-    }, 2200);
-    return () => clearInterval(iv);
-  }, [paused]);
+    fetchHistory();
+  }, []);
 
-  useEffect(() => {
-    if (!paused) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [logs, paused]);
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/scan-history`);
+      if (res.ok) {
+        const data = await res.json();
+        setScans(data.scans || []);
+      }
+    } catch {}
+    setLoading(false);
+  };
 
-  const displayed = filter === "ALL" ? logs : logs.filter((l) => l.level === filter);
+  const viewReport = async (filename: string, scanUrl: string, scanTime: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/scan-report/${filename}`);
+      if (res.ok) {
+        const data = await res.json();
+        const scans = data.scans || [];
+        const idx = scans.findIndex((s: any) => s.scan_url === scanUrl && s.scan_time === scanTime);
+        setSelectedReport(data);
+        setSelectedScanIndex(idx >= 0 ? idx : 0);
+      }
+    } catch {}
+  };
+
+  const downloadReport = async (filename: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/scan-report/${filename}`);
+      if (res.ok) {
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch {}
+  };
+
+  const formatScanType = (type: string) => {
+    const labels: Record<string, string> = {
+      sqli: "SQL Injection",
+      xss: "XSS",
+      misconfig: "Security Misconfig",
+      sensitive: "Sensitive Info"
+    };
+    return labels[type] || type;
+  };
+
+  const severityColor = (s: string) => {
+    switch (s) {
+      case "CRITICAL": return "#ff2244";
+      case "HIGH": return "#ff8800";
+      case "MEDIUM": return "#ffcc00";
+      case "LOW": return "#22c55e";
+      default: return "#5a8aaa";
+    }
+  };
 
   return (
-    <div className="space-y-4" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
-      <div className="rounded-lg overflow-hidden" style={{ background: "#0a1628", border: "1px solid rgba(0,212,255,0.15)" }}>
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: "1px solid rgba(0,212,255,0.1)" }}>
-          <ScrollText size={14} style={{ color: "#00d4ff" }} />
-          <span style={{ color: "#00d4ff", fontSize: "13px", fontWeight: 600, letterSpacing: "0.12em" }}>
-            ACTIVITY FEED
-          </span>
-          <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse ml-1" style={{ boxShadow: "0 0 6px #22c55e" }} />
-          <div className="ml-auto flex items-center gap-2">
-            <Filter size={12} style={{ color: "#5a8aaa" }} />
-            <div className="flex gap-1">
-              {(["ALL", ...ALL_LEVELS] as const).map((l) => (
-                <button
-                  key={l}
-                  onClick={() => setFilter(l)}
-                  className="px-2 py-0.5 rounded transition-all"
-                  style={{
-                    background: filter === l ? (l === "ALL" ? "rgba(0,212,255,0.15)" : `${levelColor[l as LogLevel]}18`) : "transparent",
-                    border: `1px solid ${filter === l ? (l === "ALL" ? "rgba(0,212,255,0.3)" : `${levelColor[l as LogLevel]}44`) : "rgba(0,212,255,0.1)"}`,
-                    color: filter === l ? (l === "ALL" ? "#00d4ff" : levelColor[l as LogLevel]) : "#5a8aaa",
-                    fontSize: "10px",
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  {l}
-                </button>
-              ))}
+    <div>
+      <div className="flex items-center gap-2 mb-4" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
+        <div className="w-1 h-4 rounded" style={{ background: "#00d4ff" }} />
+        <span style={{ color: "#8aadcc", fontSize: "12px", fontWeight: 600, letterSpacing: "0.12em" }}>
+          SCAN HISTORY
+        </span>
+        <button onClick={fetchHistory} className="ml-auto text-xs" style={{ color: "#5a8aaa" }}>
+          REFRESH
+        </button>
+      </div>
+
+      {loading ? (
+        <div style={{ color: "#5a8aaa", fontSize: "12px" }}>Loading...</div>
+      ) : scans.length === 0 ? (
+        <div style={{ color: "#5a8aaa", fontSize: "12px" }}>No scans yet. Run a scan to see history.</div>
+      ) : (
+        <div className="space-y-2 max-h-[500px] overflow-y-auto">
+          {scans.map((scan, i) => (
+            <div key={i} className="flex items-center gap-3 p-3 rounded"
+              style={{ background: "#0a1628", border: "1px solid rgba(0,212,255,0.1)" }}>
+              <Clock size={14} style={{ color: "#5a8aaa", flexShrink: 0 }} />
+              <div className="flex-1 min-w-0">
+                <div style={{ color: "#e2f0ff", fontSize: "12px", fontWeight: 600 }}>
+                  {formatScanType(scan.scan_type)}
+                </div>
+                <div style={{ color: "#5a8aaa", fontSize: "10px" }}>
+                  {scan.scan_url}
+                </div>
+                <div style={{ color: "#5a8aaa", fontSize: "10px" }}>
+                  {scan.scan_time} — {scan.findings} finding(s)
+                </div>
+              </div>
+              <button onClick={() => viewReport(scan.filename, scan.scan_url, scan.scan_time)}
+                className="p-1.5 rounded transition-colors hover:bg-cyan-400/10"
+                style={{ color: "#00d4ff" }} title="View">
+                <Eye size={14} />
+              </button>
+              <button onClick={() => downloadReport(scan.filename)}
+                className="p-1.5 rounded transition-colors hover:bg-cyan-400/10"
+                style={{ color: "#22c55e" }} title="Download">
+                <Download size={14} />
+              </button>
             </div>
-            <button
-              onClick={() => setPaused((v) => !v)}
-              className="px-2 py-0.5 rounded ml-1"
-              style={{
-                background: paused ? "rgba(255,204,0,0.1)" : "rgba(34,197,94,0.08)",
-                border: `1px solid ${paused ? "rgba(255,204,0,0.3)" : "rgba(34,197,94,0.3)"}`,
-                color: paused ? "#ffcc00" : "#22c55e",
-                fontSize: "10px",
-                letterSpacing: "0.08em",
-              }}
-            >
-              {paused ? "PAUSED" : "LIVE"}
-            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Report Popup */}
+      {selectedReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.7)" }}>
+          <div className="rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
+            style={{ background: "#0a1628", border: "1px solid rgba(0,212,255,0.2)" }}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <span style={{ color: "#00d4ff", fontSize: "14px", fontWeight: 600 }}>Scan Report</span>
+                <div style={{ color: "#5a8aaa", fontSize: "10px", marginTop: "2px" }}>
+                  {(selectedReport.scans || [])[selectedScanIndex]?.scan_url} — {(selectedReport.scans || [])[selectedScanIndex]?.scan_time}
+                </div>
+              </div>
+              <button onClick={() => setSelectedReport(null)} style={{ color: "#5a8aaa" }}><X size={18} /></button>
+            </div>
+
+            <div style={{ color: "#5a8aaa", fontSize: "11px", marginBottom: "12px" }}>
+              Total: {(selectedReport.scans || [])[selectedScanIndex]?.total_findings || 0} findings
+            </div>
+
+            {((selectedReport.scans || [])[selectedScanIndex]?.results || []).map((r: any, i: number) => (
+              <div key={i} className="mb-3 p-3 rounded"
+                style={{ background: "#050b12", border: "1px solid rgba(0,212,255,0.08)" }}>
+                <div style={{ color: severityColor(r.ai_severity || r.severity), fontSize: "11px", fontWeight: 700, marginBottom: "4px" }}>
+                  {r.ai_severity || r.severity || "UNKNOWN"} — {r.check_type || r.attack_type || r.payload || r.test_type || "Finding"}
+                </div>
+                <div style={{ color: "#8aadcc", fontSize: "10px" }}>
+                  {r.parameter ? `Parameter: ${r.parameter}` : ""}
+                  {r.parameter && (r.url || r.evidence) ? " — " : ""}
+                  {r.evidence || r.url || ""}
+                </div>
+                {(r.ai_confidence || r.confidence) && (
+                  <div style={{ color: "#22c55e", fontSize: "10px", marginTop: "2px" }}>
+                    Confidence: {((r.ai_confidence || r.confidence) * 100).toFixed(1)}%
+                  </div>
+                )}
+                {r.fix && (
+  <div style={{ marginTop: "8px", paddingTop: "8px", borderTop: "1px solid rgba(255,255,255,0.08)", whiteSpace: "pre-line", color: "#22c55e", fontSize: "10px", lineHeight: "1.6" }}>
+    {r.fix}
+  </div>
+)}
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Log entries */}
-        <div
-          className="overflow-y-auto"
-          style={{ maxHeight: "440px", fontFamily: "'JetBrains Mono', monospace", fontSize: "11px" }}
-        >
-          {displayed.map((log) => {
-            const c = levelColor[log.level];
-            return (
-              <div
-                key={log.id}
-                className="flex items-start gap-3 px-4 py-2 transition-colors hover:bg-cyan-400/5"
-                style={{ borderBottom: "1px solid rgba(0,212,255,0.04)" }}
-              >
-                <span style={{ color: "#3a5a72", flexShrink: 0 }}>{log.ts}</span>
-                <span
-                  className="flex items-center gap-1 px-1.5 py-0.5 rounded flex-shrink-0"
-                  style={{ background: `${c}12`, color: c, border: `1px solid ${c}30`, minWidth: "48px", justifyContent: "center" }}
-                >
-                  {levelIcon[log.level]}
-                  {log.level}
-                </span>
-                <span style={{ color: "#00d4ff88", flexShrink: 0 }}>[{log.source}]</span>
-                <span style={{ color: log.level === "CRIT" ? "#ffc0c8" : log.level === "ERR" ? "#ffd0b0" : "#8aadcc" }}>
-                  {log.message}
-                </span>
-              </div>
-            );
-          })}
-          <div ref={bottomRef} />
-        </div>
-
-        {/* Footer stats */}
-        <div className="px-5 py-2.5 flex gap-5" style={{ borderTop: "1px solid rgba(0,212,255,0.08)" }}>
-          {ALL_LEVELS.map((l) => {
-            const cnt = logs.filter((log) => log.level === l).length;
-            return (
-              <div key={l} className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: levelColor[l] }} />
-                <span style={{ color: "#5a8aaa", fontSize: "10px" }}>{l}: </span>
-                <span style={{ color: levelColor[l], fontSize: "10px", fontFamily: "'JetBrains Mono', monospace" }}>{cnt}</span>
-              </div>
-            );
-          })}
-          <span style={{ color: "#5a8aaa", fontSize: "10px", marginLeft: "auto" }}>
-            {logs.length} entries · {paused ? "paused" : "streaming"}
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

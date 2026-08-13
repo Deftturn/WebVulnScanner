@@ -1,0 +1,1463 @@
+{
+  "scans": [
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-09 22:35:31",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://demo.testfire.net",
+      "scan_time": "2026-08-09 23:49:14",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://demo.testfire.net",
+      "scan_time": "2026-08-10 00:40:12",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-10 01:26:16",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-10 02:49:22",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-10 02:53:45",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-10 03:18:55",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://demo.testfire.net",
+      "scan_time": "2026-08-10 20:43:23",
+      "total_findings": 21,
+      "results": [
+        {
+          "timestamp": "2026-08-10T20:44:50.976465",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T20:44:50.976504",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T20:44:50.976520",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T20:44:50.976530",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T20:44:50.976540",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T20:44:50.976549",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T20:44:50.976558",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.025966",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.026010",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.026022",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.026031",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.026041",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.026051",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:15:37.026060",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729726",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729782",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729801",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729819",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729835",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729851",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:16:32.729867",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        }
+      ]
+    },
+    {
+      "scan_url": "http://demo.testfire.net",
+      "scan_time": "2026-08-10 21:21:45",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-10T21:22:59.698843",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:22:59.698900",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:22:59.698924",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:22:59.698938",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:22:59.698953",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T21:22:59.698968",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T21:22:59.698982",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        }
+      ]
+    },
+    {
+      "scan_url": "http://www.itsecgames.com",
+      "scan_time": "2026-08-10 21:40:26",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://demo.testfire.net",
+      "scan_time": "2026-08-10 22:17:56",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-10T22:19:18.149483",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T22:19:18.149534",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T22:19:18.149568",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T22:19:18.149581",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T22:19:18.149592",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T22:19:18.149605",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T22:19:18.149615",
+          "url": "http://demo.testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-10 22:38:58",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-10T22:40:16.767592",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T22:40:16.767638",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T22:40:16.767655",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T22:40:16.767665",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T22:40:16.767674",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T22:40:16.767684",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T22:40:16.767693",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-10 23:37:56",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-10T23:39:21.673646",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T23:39:21.673672",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T23:39:21.673682",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T23:39:21.673689",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T23:39:21.673695",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-10T23:39:21.673701",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-10T23:39:21.673707",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 00:19:59",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 00:19:03",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 22:50:09",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 23:04:26",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 23:14:08",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 23:24:25",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 23:31:35",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 23:33:34",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-11 23:40:34",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 01:30:35",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 02:00:03",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:04:28",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:06:06.364069",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:06.364137",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:06.364155",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:06.364164",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:06.364172",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:06.364182",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:06.364192",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:04:54",
+      "total_findings": 4,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:06:30.740654",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:30.740677",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:30.740685",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:06:30.740691",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:07:20",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:08:24.512046",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:24.512088",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:24.512110",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:24.512126",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:24.512140",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:24.512156",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:08:24.512171",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:14:50",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:16:29.610670",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:16:29.610713",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:16:29.610727",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:16:29.610737",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:16:29.610746",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:16:29.610756",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:16:29.610764",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:23:45",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:27:25.344537",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:25.344608",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:25.344630",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:25.344647",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:25.344665",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:25.344682",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:27:25.344698",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:30:14",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:32:28.149170",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:28.149193",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:28.149200",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:28.149204",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:28.149209",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:28.149214",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:32:28.149218",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 02:38:01",
+      "total_findings": 5,
+      "results": [
+        {
+          "timestamp": "2026-08-12T02:39:59.081223",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:59.081294",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:59.081338",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:59.081357",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "Unable to load fix database."
+        },
+        {
+          "timestamp": "2026-08-12T02:39:59.081373",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "Unable to load fix database."
+        }
+      ]
+    },
+    {
+      "scan_url": "http://testfire.net",
+      "scan_time": "2026-08-12 04:19:58",
+      "total_findings": 7,
+      "results": [
+        {
+          "timestamp": "2026-08-12T04:21:35.309575",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "payload reflected in HTML, window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-12T04:21:35.309636",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<img src=x onerror=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9113532901,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-12T04:21:35.309671",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<svg onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9648519158,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-12T04:21:35.309690",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "\"><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-12T04:21:35.309707",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "'><script>window.__xss=1</script>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.7039112449,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: Atlassian Confluence Data Center & Server XSS via insufficient CSP (CVE-2023-22522)\n\nSecurity Reference: CVE-2023-22522\n\nWhy This Matters\n- The CSP header explicitly allows 'unsafe-inline' and any script source, so injected <script> blocks will run without restriction.\n- User-controlled data (username) is inserted directly into HTML without encoding, enabling reflected XSS.\n- No defense-in-depth: even if one layer fails (e.g., template bug), there are no additional mitigations like strict CSP, HTTP-only cookies, or logging of suspicious input.\n\nCode Example (typescript)\nimport express, { Request, Response, NextFunction } from 'express';\nimport helmet from 'helmet';\nimport escapeHtml from 'escape-html';\n\nconst app = express();\nconst PORT = 3000;\n\n// PRIMARY DEFENSE: Strong, explicit CSP via helmet\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      useDefaults: true,\n      directives: {\n        defaultSrc: [\"'self'\"],\n        scriptSrc: [\"'self'\"],\n        styleSrc: [\"'self'\", 'https:', 'data:'],\n        imgSrc: [\"'self'\", 'data:'],\n        objectSrc: [\"'none'\"],\n        baseUri: [\"'self'\"],\n        frameAncestors: [\"'none'\"],\n        upgradeInsecureRequests: []\n      }\n    },\n    xssFilter: true,\n    frameguard: { action: 'deny' },\n    noSniff: true\n  })\n);\n\n// Input validation middleware (defense in depth)\nfunction validateUsername(req: Request, res: Response, next: NextFunction): void {\n  const username = (req.query.username as string) || 'guest';\n\n  if (username.length > 50) {\n    console.warn('Username too long from', req.ip);\n    res.status(40"
+        },
+        {
+          "timestamp": "2026-08-12T04:21:35.309726",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<body onload=window.__xss=1>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9191756845,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        },
+        {
+          "timestamp": "2026-08-12T04:21:35.309743",
+          "url": "http://testfire.net/search.jsp",
+          "param": "query",
+          "form_action": null,
+          "payload": "<input onfocus=window.__xss=1 autofocus>",
+          "vector_type": "reflected_form",
+          "evidence": "window.__xss flag set (executed)",
+          "ai_severity": "CRITICAL",
+          "ai_confidence": 0.9368479848,
+          "fix": "What Was Found\nA xss vulnerability was detected in the application.\n\nHas This Happened Before?\nYes: 2023 Zendesk XSS via Macro Templates (CVE-2023-28109)\n\nSecurity Reference: CVE-2023-28109\n\nWhy This Matters\n- User-controlled content stored in database is rendered as HTML in admin context\n- Attacker injects malicious script in their own profile bio\n- When admin views user list, the payload executes with admin privileges\n- Can steal admin session tokens, modify other user accounts, or create fake login forms\n- React's dangerouslySetInnerHTML bypasses default XSS protections\n\nCode Example (javascript)\nimport React, { useState, useEffect } from 'react';\nimport DOMPurify from 'dompurify';\n\n// Secure sanitization utility\nconst sanitizeConfig = {\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n  ALLOWED_ATTR: ['href', 'title'],\n  ALLOW_DATA_ATTR: false,\n  ADD_ATTR: ['target', 'rel'],\n  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],\n  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']\n};\n\n// Hook for forced attribute addition to links\nDOMPurify.addHook('afterSanitizeAttributes', (node) => {\n  if (node.tagName === 'A') {\n    node.setAttribute('target', '_blank');\n    node.setAttribute('rel', 'noopener noreferrer');\n  }\n});\n\nfunction sanitizeUserContent(html) {\n  if (!html || typeof html !== 'string') return '';\n  return DOMPurify.sanitize(html, sanitizeConfig);\n}\n\n// Secure User Profile Component\nfunction UserProfile({ userId }) {\n  const [profile, setProfile] = useState({ displayName: '', bio: '' });\n\n  useEffect(() => {\n    fetch(`/api/users"
+        }
+      ]
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 04:52:38",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 04:57:47",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:17:45",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:25:20",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:35:23",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:38:18",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:48:41",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 05:58:57",
+      "total_findings": 0,
+      "results": []
+    },
+    {
+      "scan_url": "http://zero.webappsecurity.com",
+      "scan_time": "2026-08-12 21:28:32",
+      "total_findings": 0,
+      "results": []
+    }
+  ]
+}

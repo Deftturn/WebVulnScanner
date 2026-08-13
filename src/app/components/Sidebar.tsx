@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Shield, Target, Brain, Wifi, ScrollText, ChevronRight } from "lucide-react";
 
 interface SidebarProps {
@@ -37,9 +39,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
               <Shield size={16} className="text-white" />
             </div>
             <div>
-              <div style={{ color: "#00d4ff", letterSpacing: "0.12em", fontSize: "13px", fontWeight: 700 }}>
-                WESSEX
-              </div>
+              <div style={{ color: "#00d4ff", letterSpacing: "0.12em", fontSize: "13px", fontWeight: 700 }}>WEBSEC</div>
               <div style={{ color: "#5a8aaa", fontSize: "9px", letterSpacing: "0.2em" }}>SEC · AI · v4.2</div>
             </div>
           </div>
