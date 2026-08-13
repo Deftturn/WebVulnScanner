@@ -39,7 +39,7 @@ function TopBar({ section }: { section: string }) {
   );
 }
 
-function DashboardHome({ scanResults, scanning, scanError, scanProgress, scanUrl, setScanUrl, onScanStart, onScanComplete, onScanError, onCancelScan }: any) {
+function DashboardHome({ scanResults, scanning, scanError, scanProgress, scanLog, scanUrl, setScanUrl, onScanStart, onScanComplete, onScanError, onCancelScan }: any) {
   const [stats, setStats] = useState({ total_scans: 0, total_findings: 0, avg_confidence: 0 });
 
   useEffect(() => {
@@ -63,7 +63,7 @@ function DashboardHome({ scanResults, scanning, scanError, scanProgress, scanUrl
         </div>
         <ScanPanel
           scanResults={scanResults} scanning={scanning} scanError={scanError}
-          scanProgress={scanProgress}
+          scanProgress={scanProgress} scanLog={scanLog}
           scanUrl={scanUrl} setScanUrl={setScanUrl}
           onScanStart={onScanStart} onScanComplete={onScanComplete} onScanError={onScanError}
           onCancelScan={onCancelScan}
@@ -104,6 +104,7 @@ export default function App() {
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState("");
   const [scanProgress, setScanProgress] = useState<any>(IDLE_PROGRESS);
+  const [scanLog, setScanLog] = useState("");
   const [scanUrl, setScanUrl] = useState("");
   const pollRef = useRef<any>(null);
   const seenActivePhaseRef = useRef(false);
@@ -116,13 +117,11 @@ export default function App() {
   };
 
   const handleScanComplete = (r: any[]) => {
-    console.log("✅ handleScanComplete called");
     setScanning(false);
     setScanResults(r);
   };
 
   const handleScanError = (e: string) => {
-    console.log("❌ handleScanError:", e);
     setScanning(false);
     setScanError(e);
     stopPolling();
@@ -152,14 +151,19 @@ export default function App() {
   };
 
   const startPolling = () => {
-    console.log("🟢 startPolling called");
     stopPolling();
     pollRef.current = setInterval(async () => {
       try {
         const res = await fetch(`${API_BASE}/scan-progress`);
         if (!res.ok) return;
         const data = await res.json();
-        console.log("🔵 Poll:", data.phase);
+
+        // Also fetch the log
+        try {
+          const logRes = await fetch(`${API_BASE}/scan-log`);
+          const logData = await logRes.json();
+          if (logData.log) setScanLog(logData.log);
+        } catch {}
 
         if (data.phase === "starting" || data.phase === "crawling" || data.phase === "testing") {
           seenActivePhaseRef.current = true;
@@ -168,10 +172,7 @@ export default function App() {
         }
 
         if (data.phase === "complete") {
-          if (!seenActivePhaseRef.current) {
-            console.log("⚠️ Ignoring stale complete");
-            return;
-          }
+          if (!seenActivePhaseRef.current) return;
           setScanProgress(data);
           stopPolling();
           if (data.error) {
@@ -183,19 +184,17 @@ export default function App() {
         }
 
         setScanProgress(data);
-      } catch {
-        // transient
-      }
+      } catch {}
     }, 1500);
   };
 
   const handleScanStart = (v: boolean) => {
-    console.log("🟡 handleScanStart called with v=", v);
     setScanning(v);
     if (v) {
       setScanResults([]);
       setScanError("");
       setScanProgress({ phase: "starting" });
+      setScanLog("");
       seenActivePhaseRef.current = false;
       startPolling();
     } else {
@@ -208,10 +207,11 @@ export default function App() {
     setScanning(false);
     setScanError("Scan cancelled.");
     setScanProgress(IDLE_PROGRESS);
+    setScanLog("");
   };
 
   const scanProps = {
-    scanResults, scanning, scanError, scanProgress, scanUrl, setScanUrl,
+    scanResults, scanning, scanError, scanProgress, scanLog, scanUrl, setScanUrl,
     onScanStart: handleScanStart, onScanComplete: handleScanComplete, onScanError: handleScanError,
     onCancelScan: handleCancelScan,
   };

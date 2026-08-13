@@ -21,33 +21,51 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 PROGRESS_FILE = "scan_progress.json"
+ACTIVITY_FILE = "scan_activity.log"
 
 
 def _write_progress(**kwargs):
-    """Overwrites a small status file the frontend can poll for real
-    progress, instead of App.tsx's old fixed 10s-per-step fake timer that
-    had no relationship to what the scan was actually doing. Best-effort --
-    a failure here should never interrupt the actual scan."""
+    """Writes progress JSON and also appends a line to activity log."""
     try:
         payload = {"updated_at": datetime.now().isoformat(), **kwargs}
         with open(PROGRESS_FILE, "w") as f:
             json.dump(payload, f)
+        
+        # Build activity log line
+        phase = kwargs.get("phase", "")
+        pages = kwargs.get("pages_found", 0)
+        current_test = kwargs.get("current_test", "")
+        findings = kwargs.get("findings_so_far", 0)
+        current_page = kwargs.get("current_page", 0)
+        total_pages = kwargs.get("total_pages", 0)
+        current_url = kwargs.get("current_url", "")
+        
+        parts = []
+        if phase == "crawling":
+            parts.append(f"[CRAWL] Found {pages} pages")
+        elif phase == "testing":
+            if current_test == "sqli":
+                parts.append(f"[TEST] Page {current_page}/{total_pages} — Running SQL Injection")
+            elif current_test == "xss":
+                parts.append(f"[TEST] Page {current_page}/{total_pages} — Running XSS checks")
+            elif current_test == "misconfig":
+                parts.append(f"[TEST] Page {current_page}/{total_pages} — Checking security config")
+            elif current_test == "sensitive":
+                parts.append(f"[TEST] Page {current_page}/{total_pages} — Scanning exposed data")
+            if findings > 0:
+                parts.append(f"{findings} findings so far")
+        elif phase == "complete":
+            parts.append(f"[DONE] Scan complete — {findings} vulnerabilities found")
+        
+        if parts:
+            log_line = " | ".join(parts)
+            with open(ACTIVITY_FILE, "a", encoding="utf-8") as f:
+                f.write(log_line + "\n")
     except Exception as e:
         logger.debug(f"Progress write failed: {type(e).__name__}: {e}")
 
 
 class _BaseReportLogger:
-    """Shared save() logic for all four report loggers below.
-
-    save() upserts by (scan_url, scan_time) instead of always appending.
-    scan_time is set once in __init__ for the whole run, so calling save()
-    repeatedly during a long scan just refreshes the same entry in place --
-    it does NOT pile up one entry per call. This is what lets main.py call
-    save() after every page: results are continuously persisted to disk, so
-    if the process gets killed (a subprocess timeout, Ctrl+C, a crash)
-    partway through, whatever was found up to that point is still on disk
-    instead of being lost entirely.
-    """
     def __init__(self, filename):
         self.filename, self.results, self.scan_url = filename, [], ""
         self.scan_time = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -105,14 +123,6 @@ class SensitiveReportLogger(_BaseReportLogger):
 
 
 def _form_key(form: dict, page_url: str) -> tuple:
-    """Identity of a form independent of which page it was scraped from. A
-    site-wide search box or nav form gets extracted fresh from every page's
-    HTML by the crawler (correctly -- it has no way to know ahead of time
-    it's the same form), but that means it was being FULLY payload-tested
-    once per page it appears on. On a 15-page site where one form is in the
-    header of every page, that's up to 15x redundant SQLi + XSS testing of
-    a single form -- almost certainly the dominant cost of a slow run, more
-    than AI latency or navigation timeouts."""
     action = form.get("action", page_url)
     method = form.get("method", "get").lower()
     inputs = tuple(sorted(form.get("inputs", [])))
@@ -127,6 +137,10 @@ def _sync_new_results(source_list, seen_count, log_fn):
 
 
 async def run():
+    # Clear old activity log
+    if os.path.exists(ACTIVITY_FILE):
+        os.remove(ACTIVITY_FILE)
+    
     _write_progress(phase="starting")
     crawl_logger = JSONLogger()
     sqli_logger = SQLiReportLogger()
@@ -171,7 +185,7 @@ async def run():
     xss_scanner = None
     total_pages = len(crawl_results)
     _write_progress(phase="testing", current_page=0, total_pages=total_pages,
-        current_url="", findings_so_far=0, scan_url=scan_url)
+        current_url="", findings_so_far=0, current_test="sqli", scan_url=scan_url)
 
     try:
         async with async_playwright() as pw:
@@ -187,7 +201,7 @@ async def run():
                 for page_index, page_result in enumerate(crawl_results):
                     url, params, forms = page_result.url, page_result.params or [], page_result.forms or []
 
-                    # Deduplicate forms across the WHOLE crawl, not per page.
+                    # Deduplicate forms
                     new_forms = []
                     for form in forms:
                         key = _form_key(form, url)
@@ -196,6 +210,11 @@ async def run():
                             new_forms.append(form)
                     forms = new_forms
 
+                    # --- SQL Injection ---
+                    _write_progress(phase="testing", current_page=page_index + 1, total_pages=total_pages,
+                        current_url=url, findings_so_far=sum(len(log.results) for log in all_loggers),
+                        current_test="sqli", scan_url=scan_url)
+                    
                     for param in params:
                         try:
                             await tester.test_url_parameter(context, url, param)
@@ -210,6 +229,12 @@ async def run():
                             logger.warning(f"SQLi form error: {type(e).__name__}: {e}")
                         finally:
                             sqli_seen = _sync_new_results(tester.results, sqli_seen, sqli_logger.log_result)
+
+                    # --- XSS ---
+                    _write_progress(phase="testing", current_page=page_index + 1, total_pages=total_pages,
+                        current_url=url, findings_so_far=sum(len(log.results) for log in all_loggers),
+                        current_test="xss", scan_url=scan_url)
+                    
                     try:
                         xss_return = await xss_scanner.scan_page(url=url, params=params, forms=forms)
                         if not xss_has_results_attr:
@@ -219,11 +244,23 @@ async def run():
                     finally:
                         if xss_has_results_attr:
                             xss_seen = _sync_new_results(xss_scanner.results, xss_seen, xss_logger.log_result)
+
+                    # --- Misconfig ---
+                    _write_progress(phase="testing", current_page=page_index + 1, total_pages=total_pages,
+                        current_url=url, findings_so_far=sum(len(log.results) for log in all_loggers),
+                        current_test="misconfig", scan_url=scan_url)
+                    
                     try:
                         for result in misconfig_scanner.scan_url(url, headers=page_result.headers, html=page_result.html):
                             misconfig_logger.log_result(result.to_dict())
                     except Exception as e:
                         logger.debug(f"Misconfig error: {type(e).__name__}: {e}")
+
+                    # --- Sensitive ---
+                    _write_progress(phase="testing", current_page=page_index + 1, total_pages=total_pages,
+                        current_url=url, findings_so_far=sum(len(log.results) for log in all_loggers),
+                        current_test="sensitive", scan_url=scan_url)
+                    
                     try:
                         for result in sensitive_scanner.scan_url(url, html=page_result.html, headers=page_result.headers):
                             sensitive_logger.log_result(result.to_dict())
@@ -266,11 +303,5 @@ if __name__ == "__main__":
     try:
         asyncio.run(run())
     except Exception as e:
-        # An uncaught crash (e.g. the WinError 32 PermissionError from two
-        # concurrent scans writing the same file) would otherwise die
-        # before ever reaching the phase="complete" write at the bottom of
-        # run(). Without this, the frontend's poller would just see the
-        # last progress state before the crash and wait forever for an
-        # update that will never come, since the process is dead.
         _write_progress(phase="complete", error=f"Scan crashed: {type(e).__name__}: {e}")
         raise

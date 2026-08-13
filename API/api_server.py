@@ -218,6 +218,28 @@ def _read_latest_reports(scanner_dir: str) -> dict:
 
 _scan_in_progress = False
 
+@app.post("/check-url")
+def check_url(data: ScannerInput):
+    """Quick connectivity check before starting a full scan."""
+    target_url = data.url or ""
+    if not target_url: return {"status": "invalid", "error": "URL is empty"}
+    
+    if not target_url.startswith(("http://", "https://")):
+        target_url = "http://" + target_url
+    
+    try:
+        response = requests.get(target_url, timeout=10, allow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+        if response.status_code < 400:
+            return {"status": "reachable", "status_code": response.status_code}
+        else:
+            return {"status": "unreachable", "status_code": response.status_code, "error": f"Server returned {response.status_code}"}
+    except requests.exceptions.ConnectionError:
+        return {"status": "unreachable", "error": "Connection failed — domain may not exist or is offline"}
+    except requests.exceptions.Timeout:
+        return {"status": "unreachable", "error": "Connection timed out — site may be slow or blocking requests"}
+    except Exception as e:
+        return {"status": "unreachable", "error": str(e)}
 
 @app.post("/start-scan")
 def start_scan(data: ScannerInput):
@@ -331,6 +353,21 @@ def scan_progress():
             return json.load(f)
     except Exception:
         return {"phase": "idle"}
+
+@app.get("/scan-log")
+def scan_log():
+    """Returns clean activity log from the scanner."""
+    scanner_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scanner")
+    log_path = os.path.join(scanner_dir, "scan_activity.log")
+    if not os.path.exists(log_path):
+        return {"log": ""}
+    try:
+        with open(log_path, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+            lines = content.strip().split("\n")
+            return {"log": "\n".join(lines[-25:])}
+    except Exception:
+        return {"log": ""}
 
 @app.get("/datarobot-latency-check")
 def datarobot_latency_check():

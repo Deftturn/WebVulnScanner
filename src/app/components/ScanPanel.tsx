@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { useRef } from "react";
-import { Search, Globe, AlertTriangle, Shield, Loader2, X, Bug } from "lucide-react";
+import { Search, Globe, AlertTriangle, Shield, Loader2, X, Bug, Info, CheckCircle2, Activity, Terminal, ShieldCheck, FileSearch } from "lucide-react";
 
 const API_BASE = "http://127.0.0.1:8000";
 
@@ -9,104 +9,193 @@ interface ScanResult { severity: string; confidence: number; attack_type: string
 interface ScanPanelProps {
   scanResults: ScanResult[]; scanning: boolean; scanError: string;
   scanProgress: any;
+  scanLog: string;
   scanUrl: string; setScanUrl: (v: string) => void;
   onScanStart: (v: boolean) => void; onScanComplete: (r: ScanResult[]) => void; onScanError: (e: string) => void;
   onCancelScan: () => void;
 }
 
-function ProgressDisplay({ scanProgress }: { scanProgress: any }) {
+const SCAN_STEPS = [
+  { icon: Globe, label: "Crawling website..." },
+  { icon: Bug, label: "Testing SQL Injection..." },
+  { icon: Terminal, label: "Testing XSS..." },
+  { icon: ShieldCheck, label: "Checking Security Config..." },
+  { icon: FileSearch, label: "Scanning for Data Exposure..." },
+  { icon: Activity, label: "Analyzing Results..." },
+];
+
+function ProgressDisplay({ scanProgress, scanLog }: { scanProgress: any; scanLog: string }) {
   const phase = scanProgress?.phase ?? "idle";
   const totalPages = scanProgress.total_pages ?? 0;
   const done = scanProgress.current_page ?? 0;
   const findings = scanProgress.findings_so_far ?? 0;
   const pageCount = totalPages > 0 ? totalPages : (scanProgress.pages_found ?? 0);
-  const ratio = totalPages > 0 && done > 0 ? Math.min(1, done / totalPages) : null;
-  const pct = ratio !== null ? Math.round(ratio * 100) : 0;
+  const currentTest = scanProgress.current_test ?? "";
+
+  let pct = 0;
+  let ratio: number | null = null;
+  
+  if (phase === "crawling" && totalPages > 0) {
+    pct = Math.round((pageCount / Math.max(1, pageCount + 2)) * 10);
+    ratio = pct / 100;
+  } else if (phase === "testing" && totalPages > 0) {
+    const testMap: Record<string, number> = { sqli: 1, xss: 2, misconfig: 3, sensitive: 4 };
+    const testIndex = testMap[currentTest] ?? 1;
+    const stepBase = testIndex * 18;
+    const pageProgress = (done / totalPages) * 18;
+    pct = Math.min(90, Math.round(stepBase + pageProgress));
+    ratio = pct / 100;
+  } else if (phase === "complete") {
+    pct = 100;
+    ratio = 1;
+  }
+
+  let activeIndex = -1;
+  if (phase === "crawling") activeIndex = 0;
+  else if (phase === "testing") {
+    const testMap: Record<string, number> = { sqli: 1, xss: 2, misconfig: 3, sensitive: 4 };
+    activeIndex = testMap[currentTest] ?? 1;
+  } else if (phase === "complete") activeIndex = 5;
 
   return (
-    <div className="space-y-2">
-      {/* Header */}
-      <div className="flex items-center gap-2 pb-2" style={{ borderBottom: "1px solid rgba(0,212,255,0.1)" }}>
-        <Loader2 size={14} className="animate-spin" style={{ color: "#00d4ff" }} />
-        <span style={{ color: "#00d4ff", fontSize: "12px", fontWeight: 600 }}>
-          {phase === "starting" && "Initializing..."}
-          {phase === "crawling" && `Crawling — ${pageCount} pages found`}
-          {phase === "testing" && `Testing page ${done}/${totalPages}`}
-          {phase === "complete" && "Complete"}
-        </span>
-        {ratio !== null && (
-          <span style={{ color: "#5a8aaa", fontSize: "10px", marginLeft: "auto" }}>{pct}%</span>
-        )}
+    <div className="space-y-3">
+      {/* Steps */}
+      <div className="space-y-1">
+        {SCAN_STEPS.map((step, i) => {
+          const Icon = step.icon;
+          const isDone = i < activeIndex;
+          const isActive = i === activeIndex;
+          return (
+            <div key={i} className="flex items-center gap-2" style={{ opacity: isActive || isDone ? 1 : 0.3 }}>
+              {isDone ? (
+                <CheckCircle2 size={13} style={{ color: "#22c55e", flexShrink: 0 }} />
+              ) : isActive ? (
+                <Loader2 size={13} className="animate-spin" style={{ color: "#00d4ff", flexShrink: 0 }} />
+              ) : (
+                <Icon size={13} style={{ color: "#3a5a72", flexShrink: 0 }} />
+              )}
+              <div style={{ 
+                color: isDone ? "#22c55e" : isActive ? "#00d4ff" : "#5a8aaa", 
+                fontSize: "10px", 
+                fontWeight: isActive ? 600 : 400 
+              }}>
+                {step.label}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Progress bar */}
-      {ratio !== null && (
-        <div style={{ height: "4px", borderRadius: "2px", background: "rgba(0,212,255,0.1)", overflow: "hidden" }}>
-          <div style={{
-            width: `${pct}%`, height: "100%",
-            background: "linear-gradient(90deg, #00d4ff, #0088cc)",
-            transition: "width 0.5s ease",
-            borderRadius: "2px",
-          }} />
+      {/* Live log */}
+      {scanLog && (
+        <div style={{ 
+          maxHeight: "120px", 
+          overflowY: "auto",
+          background: "rgba(0,0,0,0.4)",
+          borderRadius: "4px",
+          padding: "8px",
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: "9px",
+          color: "#5a8aaa",
+          border: "1px solid rgba(0,212,255,0.08)",
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-all",
+          lineHeight: "1.6"
+        }}>
+          {scanLog}
         </div>
       )}
 
-      {/* Details */}
-      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px" }}>
-        {phase === "starting" && (
-          <div style={{ color: "#5a8aaa" }}>
-            <div>• Launching browser engine</div>
-            <div>• Initializing test modules</div>
+      {/* Progress bar */}
+      {ratio !== null && (
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+            <span style={{ color: "#5a8aaa", fontSize: "9px" }}>Overall Progress</span>
+            <span style={{ color: "#00d4ff", fontSize: "9px", fontWeight: 600 }}>{pct}%</span>
           </div>
-        )}
-        
-        {(phase === "crawling" || phase === "testing" || phase === "complete") && pageCount > 0 && (
-          <div style={{ color: "#5a8aaa" }}>
-            <div>• {pageCount} pages discovered</div>
-            <div>• Forms and parameters extracted</div>
+          <div style={{ height: "4px", borderRadius: "2px", background: "rgba(0,212,255,0.1)", overflow: "hidden" }}>
+            <div style={{
+              width: `${pct}%`, height: "100%",
+              background: "linear-gradient(90deg, #00d4ff, #0088cc)",
+              transition: "width 0.5s ease",
+              borderRadius: "2px",
+            }} />
           </div>
-        )}
+        </div>
+      )}
 
-        {(phase === "testing" || phase === "complete") && (
-          <div style={{ color: "#5a8aaa" }}>
-            {scanProgress.current_url && (
-              <div style={{ color: "#3a5a72", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                • Current: {scanProgress.current_url}
-              </div>
-            )}
-            <div>• Testing: SQL Injection (20 variants)</div>
-            <div>• Testing: Cross-Site Scripting (9 variants)</div>
-            <div>• Testing: Security Misconfiguration</div>
-            <div>• Testing: Sensitive Data Exposure</div>
-          </div>
-        )}
-
-        {findings > 0 && (
-          <div style={{ color: "#ff8800", marginTop: "2px" }}>
-            ▶ {findings} vulnerabilit{findings === 1 ? 'y' : 'ies'} found so far
-          </div>
-        )}
-      </div>
+      {/* Findings alert */}
+      {findings > 0 && (
+        <div style={{ 
+          display: "flex", alignItems: "center", gap: "6px",
+          color: "#ff8800", fontSize: "10px",
+          background: "rgba(255,136,0,0.06)", padding: "6px 8px",
+          borderRadius: "4px", border: "1px solid rgba(255,136,0,0.2)"
+        }}>
+          <AlertTriangle size={10} style={{ flexShrink: 0 }} />
+          <span>{findings} vulnerabilities found so far</span>
+        </div>
+      )}
     </div>
   );
 }
 
-export function ScanPanel({ scanResults, scanning, scanError, scanProgress, scanUrl, setScanUrl, onScanStart, onScanComplete, onScanError, onCancelScan }: ScanPanelProps) {
+export function ScanPanel({ scanResults, scanning, scanError, scanProgress, scanLog, scanUrl, setScanUrl, onScanStart, onScanComplete, onScanError, onCancelScan }: ScanPanelProps) {
   const submittingRef = useRef(false);
 
   const startScan = async () => {
     if (scanning || !scanUrl || submittingRef.current) return;
+    
+    let urlToScan = scanUrl.trim();
+    
+    if (!urlToScan) {
+      onScanError("Please enter a URL to scan.");
+      return;
+    }
+    
+    if (!urlToScan.startsWith("http://") && !urlToScan.startsWith("https://")) {
+      urlToScan = "http://" + urlToScan;
+      setScanUrl(urlToScan);
+    }
+    
+    try {
+      const parsed = new URL(urlToScan);
+      if (!parsed.hostname.includes(".")) {
+        onScanError("Invalid URL. Please enter a valid domain (e.g., example.com).");
+        return;
+      }
+    } catch {
+      onScanError("Invalid URL format. Please enter a valid URL.");
+      return;
+    }
+    
     submittingRef.current = true;
     onScanStart(true);
 
     try {
+      const checkRes = await fetch(`${API_BASE}/check-url`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlToScan }),
+      });
+      
+      const checkData = await checkRes.json();
+      
+      if (checkData.status === "unreachable") {
+        onScanError(checkData.error || `Cannot reach ${urlToScan}. Please check the URL and try again.`);
+        onScanStart(false);
+        submittingRef.current = false;
+        return;
+      }
+      
       const scanRes = await fetch(`${API_BASE}/start-scan`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: scanUrl, payload: "", language: "python" }),
+        body: JSON.stringify({ url: urlToScan, payload: "", language: "python" }),
       });
+      
       if (!scanRes.ok) onScanError("Failed to start scan.");
     } catch {
       onScanError("Failed to connect.");
+      onScanStart(false);
     } finally {
       submittingRef.current = false;
     }
@@ -154,7 +243,25 @@ export function ScanPanel({ scanResults, scanning, scanError, scanProgress, scan
 
       <div className="rounded p-4 min-h-[200px] max-h-[500px] overflow-y-auto" style={{ background: "#030810", border: "1px solid rgba(0,212,255,0.1)", fontFamily: "'JetBrains Mono', monospace" }}>
 
-        {scanning && <ProgressDisplay scanProgress={scanProgress} />}
+        {scanning && <ProgressDisplay scanProgress={scanProgress} scanLog={scanLog} />}
+
+        {/* SCAN COMPLETE banner */}
+        {!scanning && scanResults.length > 0 && (
+          <div className="flex items-center gap-2 mb-3" style={{ 
+            background: "rgba(34,197,94,0.06)", 
+            border: "1px solid rgba(34,197,94,0.2)",
+            borderRadius: "4px",
+            padding: "8px 12px"
+          }}>
+            <CheckCircle2 size={16} style={{ color: "#22c55e", flexShrink: 0 }} />
+            <div>
+              <span style={{ color: "#22c55e", fontSize: "12px", fontWeight: 600 }}>SCAN COMPLETE</span>
+              <span style={{ color: "#5a8aaa", fontSize: "10px", marginLeft: "8px" }}>
+                {scanResults.length} vulnerabilities found
+              </span>
+            </div>
+          </div>
+        )}
 
         {!scanning && scanResults.length === 0 && !scanError && (
           <div className="py-4" style={{ color: "#5a8aaa", fontSize: "12px" }}>
@@ -186,6 +293,18 @@ export function ScanPanel({ scanResults, scanning, scanError, scanProgress, scan
             )}
           </div>
         ))}
+
+        {/* AI Disclaimer */}
+        <div style={{ 
+          display: "flex", alignItems: "center", gap: "6px",
+          color: "#3a5a72", fontSize: "9px", textAlign: "center",
+          marginTop: "12px", paddingTop: "8px",
+          borderTop: "1px solid rgba(0,212,255,0.06)",
+          fontFamily: "'Rajdhani', sans-serif", fontStyle: "italic"
+        }}>
+          <Info size={10} style={{ flexShrink: 0 }} />
+          <span>AI-powered detection — results may contain false positives or miss vulnerabilities. Always verify findings manually.</span>
+        </div>
       </div>
     </div>
   );
