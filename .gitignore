@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pkl
+*.log
+*.json
+
+# Environment
+.env
+.env_backup
+.env.local
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Scanner outputs
+scanner/*_report.json
+scanner/scan_progress.json
+scanner/scan_results.json
+scanner/scanner.log
+scanner/final_report_json
+
+# IDE
+.vscode/
+.idea/
