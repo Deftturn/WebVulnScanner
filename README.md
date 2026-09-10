@@ -7,7 +7,6 @@
 
   Happy hacking 😉
 
-  This is a code bundle for Web Security Dashboard. The original project is available at https://www.figma.com/design/Qx78EdlkBmeawWsKDMKIbu/Web-Security-Dashboard.
 
   ## Running the code
 
