@@ -1,7 +1,7 @@
 
   # Web Security Dashboard
   ## 🚀 Purpose
-  This project is developed to help detect weaknesses in websites without needing any expertise in security, as long as you can read this system will serve you well and cut unneccesary costs invloved in hiring experts. However, just like everything needing some form of human review, you will do well to consider the reports it gives and make further research when needed. 
+  This project is developed to help detect weaknesses in websites without needing any expertise in security, as long as you can read, this system will serve you well, and cut unneccessary costs involved in hiring experts. However, just like any other system needing some form of human review, you will do well to consider the reports it gives and make further research when needed. 
 
   ⚠️ This project is strictly meant for research purposes. Any malicious activity made using this project will not be the fault of the developers of this project. 
 
